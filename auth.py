@@ -248,4 +248,3 @@ while True:
     #If non-integer value is given, restarts loop after printing statement        
     except ValueError:
         print("The input you have entered is not valid. Please enter either 1 or 2, thank you.")
-        
