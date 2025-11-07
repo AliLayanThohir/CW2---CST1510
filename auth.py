@@ -115,11 +115,7 @@ def verify_pass(stored,provided):
 
 #Function to login a user
 def login(username,password):
-    #To check whether user exists using the verify_user function
-    if not verify_user(username):
-        return "Incorrect username or this user doesn't exist."
-    
-    #If user exists, opens text file to read hashed password and verify input password    
+    #Opens text file to read hashed password and verify input password    
     with open("users.txt","r") as file: 
         #Reads each line in file
         for line in file:
@@ -224,7 +220,7 @@ while True:
             #Group to be assigned to
             group = int(input("1. Cybersecurity Analysts\n2. Data Scientists\n3. IT Administrators\nPlease enter what group you belong to: "))
             
-            #If user enters an invalid group number
+            #If user enters an invalid group number - restarts loop
             if group <1 or group >3:
                 print("The input you have entered is not among the options. Please enter only 1, 2 or 3.")      
                 continue
@@ -236,7 +232,15 @@ while True:
         #If user wants to login to an existing account                
         elif choice == 2:
             #.strip() is used to remove any leading or trailing spaces or new line characters
+            
+            #Making sure username is valid / exists, if not - restarts loop
             username = input("Please enter your registered username: ").strip()
+            verified_user = verify_user(username)
+            if not verified_user:
+                print("Incorrect username or this user doesn't exist.")
+                continue 
+            
+            #Password for login
             password = input("Please enter your password: ").strip()
             
             #Login user function called and checked using the inputs given above, prints whether successful or not
