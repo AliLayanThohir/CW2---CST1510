@@ -17,7 +17,7 @@ LOCKOUT_FILE = "lockout.txt"
 #Function to check password strength
 def check_password_strength(password):
     #Special characters
-    special = string.punctuation
+    special = string.punctuation 
     
     #Flags for strength checking
     has_lower = False
@@ -26,7 +26,7 @@ def check_password_strength(password):
     has_special = False
     
     #Length check for password
-    if len(password) < 6:
+    if len(password) < 8:
         return  "Weak"
         
     #Loop through each character in the password and checks if all strength criteria is met
@@ -43,8 +43,8 @@ def check_password_strength(password):
     
     #Length check for medium incase all flags are true but length is short
     if has_lower and has_upper and has_digit and has_special:
-        #If all criteria is met and length is minimum 8
-        if len(password) >= 8:
+        #If all criteria is met and length is minimum 12
+        if len(password) >= 12:
             return "Strong"
         #If all criteria is met but length is less than 8
         else: 
@@ -83,7 +83,7 @@ def register(username,password,group):
         group = "IT Administrator"
         
     #Storing username, password and role in a text file
-    with open ("users.txt","a") as file:
+    with open (USER_DATA_FILE,"a") as file:
         file.write(f"{username},{hashed},{group}\n")
         
     #Confirms that the user has been registered
@@ -94,7 +94,7 @@ def verify_user(username):
     #To handle case where users.txt file does not exist yet so loop does not break automatically / end abruptly
     try:
         #Checking if username already exists
-        with open("users.txt","r") as file:
+        with open(USER_DATA_FILE,"r") as file:
             user = file.readlines()
             #Reads each line in the file one by one
             for line in user:
@@ -116,13 +116,9 @@ def verify_pass(stored,provided):
 
 #Function to login a user
 def login(username,password):
-    
-    #Check if user is locked out, if they are, print statement, if not, nothing happens
-    if check_lockout(username):
-        return f"Your account '{user}' is locked, please try to login 5 minutes after you have been locked out."
-    
+   
     #Opens text file to read hashed password and verify input password    
-    with open("users.txt","r") as file: 
+    with open(USER_DATA_FILE,"r") as file: 
         #Reads each line in file
         for line in file:
             #Gets rid of any newline characters or empty spaces
@@ -146,7 +142,7 @@ def login(username,password):
                         record_attempt(username)
                         
                         #If user reaches 3rd failed attempt
-                        with open("lockout.txt", "r") as file:
+                        with open(LOCKOUT_FILE, "r") as file:
                             #Goes through the file line by line then assigns values in line to variables
                             for line in file:
                                 user, attempts, last_time = line.strip().split(",")
@@ -158,7 +154,7 @@ def login(username,password):
 #Function to validate username
 def validate_user(username):
     #Length validation for username
-    if len(username) <3 or len(username) >20:
+    if len(username) < 3 or len(username) > 20:
         return False, 'Error: Username should be between 3 and 20 characters long.'
     #Invalid characters for username
     for char in username:
@@ -181,7 +177,7 @@ def create_token(username):
     #Gets current time for session 
     curtime = datetime.now().strftime("%H:%M:%S")
     #Storing token and time in a text file
-    with open("sessions.txt","a") as file:
+    with open(SESSION_DATA_FILE,"a") as file:
         file.write(f'{username},{token},{curtime}\n')                
     #Returns the token number after function is called
     return token, curtime
@@ -191,7 +187,7 @@ def check_lockout(username):
     #To handle case where lockout.txt file does not exist yet so loop does not break automatically / end abruptly
     try:
         #Opens lockout.txt file to read
-        with open("lockout.txt","r") as file:
+        with open(LOCKOUT_FILE,"r") as file:
             #Goes line by line in file
             for line in file:
                 #Get's information from the line and assigns it to these 3 variables
@@ -214,12 +210,12 @@ def check_lockout(username):
 
 #Function to record failed attempts
 def record_attempt(username):
-    #Dictionary to keep record of failed attempts, key being username, value being the attempt number
+    #Dictionary to keep record of failed attempts, key being username, value being the attempt number and timestamp
     data = {}
     #In the case lockout.txt doesn't exist yet
     try:
         #Opens file, reads it line by line, if it exists assigns information to variables
-        with open("lockout.txt","r") as file:
+        with open(LOCKOUT_FILE,"r") as file:
             for line in file:
                 user, attempts, latest_time = line.strip().split(",")
                 #Stores the user data and the attempts along with the attempt time in dictionary
@@ -237,7 +233,7 @@ def record_attempt(username):
         data[username] = [1, datetime.now().strftime("%Y-%m-%d %H:%M:%S")]
 
     #Updates data into file / creates file if it doesn't exist and stores first user's data in it
-    with open("lockout.txt","w") as file:
+    with open(LOCKOUT_FILE,"w") as file:
         for user, (attempts, latest_time) in data.items():
             file.write(f'{user},{attempts},{latest_time}\n')
 
@@ -246,10 +242,10 @@ def reset_lockout(username):
     #List to store lines from file
     lines = []
     #Opens textfile and adds lines to list
-    with open("lockout.txt","r") as file:
+    with open(LOCKOUT_FILE,"r") as file:
         lines = file.readlines() 
         
-    with open("lockout.txt","w") as file:
+    with open(LOCKOUT_FILE,"w") as file:
         #For each line in the list
         for line in lines:
             #If the user is in this line, skips this line
@@ -258,7 +254,7 @@ def reset_lockout(username):
                 file.write(line)
                 
 #Input from user for menu task as a loop until either valid input is given or user exits. 
-print('Welcome to the Multi-Domain Intelligence Platform')
+print('Welcome to the Multi-Domain Intelligence Platform\n')
 while True:
     #Menu/Start-up display for registration/login
     print("Please select an option from the following:\n\t1. Register as a new user\n\t2. Login as an existing user")
@@ -272,72 +268,119 @@ while True:
             break
         
         #If user wants to register a new account
-        elif choice == 1:       
+        elif choice == 1:
+            #Display of function
+            print("-- Registration --")       
+            
             #.strip() is used to remove any leading or trailing spaces or new line characters
-            #Username
-            username = input("Please enter your username: ").strip()
-            #Validation check for username using predefined function
-            valid_user, msg = validate_user(username)
-            #If username is invalid, restarts loop
-            if not valid_user:
-                print(msg)
-                continue 
             
-            #Password
-            password = input("Please enter a password: ").strip() 
-            #Validation check for password using predefined function
-            valid_pass, msg = validate_pass(password)
-            #If password is invalid, restarts loop
-            if not valid_pass:
-                print(msg)
-                continue
-            #Password strength check using predefined function
-            strength = check_password_strength(password)
-            #If password strength is not strong, restarts loop 
-            if strength != "Strong":
-                print(f'''
-                      Your password strength is: {strength}. Please choose a stronger password.
-                      It should be a minimum of 8 characters and contain one of each of the following:
-                      - Uppercase letter
-                      - Lowercase letter
-                      - A digit
-                      - A special character like '!','@','#',etc...''')
-                continue 
+            #Username - prompts until Valid
+            while True:
+                username = input("Please enter your username: ").strip()
+                
+                #Validation check for username using predefined function
+                valid_user, msg = validate_user(username)
+                #If username is invalid, restarts loop
+                if not valid_user:
+                    print(msg)
+                    continue 
+                #Check for already existing usernames
+                if verify_user(username):
+                    print(f'User: {username} already exists, please choose a different username.')
+                    continue
+                break
             
-            #Group to be assigned to
-            group = int(input("1. Cybersecurity Analysts\n2. Data Scientists\n3. IT Administrators\nPlease enter what group you belong to: "))
+            #Password - prompts until valid
+            while True:
+                password = input("Please enter a password: ").strip() 
+                #Validation check for password using predefined function
+                valid_pass, msg = validate_pass(password)
+                #If password is invalid, restarts loop
+                if not valid_pass:
+                    print(msg)
+                    continue
+                #Password strength check using predefined function
+                strength = check_password_strength(password)
+                #If password strength is not strong, restarts loop 
+                if strength != "Strong":
+                    print(f'''
+                        Your password strength is: {strength}. Please choose a stronger password.
+                        It should be a minimum of 12 characters and contain one of each of the following:
+                        - Uppercase letter
+                        - Lowercase letter
+                        - A digit
+                        - A special character like '!','@','#',etc...\n''')
+                    continue
+                break
             
-            #If user enters an invalid group number - restarts loop
-            if group <1 or group >3:
-                print("The input you have entered is not among the options. Please enter only 1, 2 or 3.")      
-                continue
-            
+            #Group - prompts until valid
+            while True:
+                try:
+                    #Group to be assigned to
+                    group = int(input("1. Cybersecurity Analysts\n2. Data Scientists\n3. IT Administrators\nPlease enter what group you belong to: "))
+                except ValueError:
+                     print("The input you have entered is not among the options. Please enter only 1, 2 or 3.")        
+                     continue
+                     
+                #If user enters an invalid group number - restarts loop
+                if group <1 or group >3:
+                    print("The input you have entered is not among the options. Please enter only 1, 2 or 3.")      
+                    continue
+                break
+                    
             #If all validations are passed, registers user and prints confirmation
             result = register(username,password,group)
             print(result)
-        
+            print()
+                
         #If user wants to login to an existing account                
         elif choice == 2:
+            print("-- Login --")
             #.strip() is used to remove any leading or trailing spaces or new line characters
             
-            #Making sure username is valid / exists, if not - restarts loop
-            username = input("Please enter your registered username: ").strip()
-            verified_user = verify_user(username)
-            if not verified_user:
-                print("Incorrect username or this user doesn't exist.")
-                continue 
+            #Username - prompts until Valid
+            while True:
+                #Making sure username is valid / exists
+                username = input("Please enter your registered username: ").strip()
+                verified_user = verify_user(username)
+                if not verified_user:
+                    print("Incorrect username or this user doesn't exist.")
+                    continue 
+                
+                #Making sure user is not locked out currently'
+                if check_lockout(username):
+                    print(f"Your account '{username}' is locked, please try to login 5 minutes after you have been locked out.")
+                    break
+                
+                #If username is correct and they are not in a lockout, continues onto password
+                break
             
-            #Password for login
-            password = input("Please enter your password: ").strip()
-            
-            #Login user function called and checked using the inputs given above, prints whether successful or not
-            result = login(username,password)
-            print(result)
-            
+            #Password - prompts until lockout or correct
+            while True:
+                #Password for login
+                password = input("Please enter your password: ").strip()
+                
+                #Login user function called and checked using the inputs given above, prints whether successful or not
+                result = login(username,password)
+    
+                #If login successful, breaks loop and returns to main menu
+                if "Successfully logged in" in result:
+                    print(result)
+                    break
+                #If unsuccessful continues loop until lockout
+                else:
+                    print(result)
+                                    
+                    #Making sure user is not locked out currently'
+                    if check_lockout(username):
+                        print(f"Your account '{username}' is locked, please try to login 5 minutes after you have been locked out.")
+                        break
+                    continue
+     
         #If user inputs invalid option, print statement and restarts loop 
         elif choice < 0 or choice > 2:
             print("The input you have entered is not valid. Please enter either 1 or 2, thank you.")
-    
+  
     #If non-integer value is given, restarts loop after printing statement        
     except ValueError:
         print("The input you have entered is not valid. Please enter either 1 or 2, thank you.")
