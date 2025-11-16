@@ -1,5 +1,6 @@
-#Libaries needed for program
+#Import needed to make this module work
 import sqlite3
+from app.data.db import connect_database
 
 #Function that creates the users table in a database, along with its variables and format of them
 def create_users_table(conn):
@@ -30,7 +31,7 @@ def create_cyber_incidents_table(conn):
     incident_type TEXT NOT NULL,
     severity TEXT NOT NULL,
     status TEXT DEFAULT 'Open',
-    decription TEXT,
+    description TEXT,
     reported_by TEXT NOT NULL,
     created_at TIMESTAMP DEAFULT CURRENT_TIMESTAMP
     )
@@ -80,10 +81,43 @@ def create_it_tickets_table(conn):
     conn.commit
     print("✅ IT tickets table created successfully!")
 
+#Function to create lockout table
+def create_lockout_table(conn):
+    cursor = conn.cursor()
+    create_lockout_sql= """
+    CREATE TABLE IF NOT EXISTS lockout (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT NOT NULL UNIQUE,
+        failed_attempts INTEGER DEFAULT 0,
+        last_attempt_time TIMESTAMP
+    )
+    """
+    cursor.execute(create_lockout_sql)
+    conn.commit()
+    print("✅ Lockout table created successfully!")
+
+#Function to store sessions in created table
+def create_sessions_table(conn):
+    cursor = conn.cursor()
+    create_session_sql = """
+    CREATE TABLE IF NOT EXISTS sessions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT NOT NULL,
+        token TEXT NOT NULL UNIQUE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (username) REFERENCES users (username)
+    )
+    """
+    cursor.execute(create_session_sql)
+    conn.commit()
+    print("✅ Sessions table created successfully!")
+
 #Function that runs everything
 def create_all_tables(conn):
-    """Create all tables."""
     create_users_table(conn)
     create_cyber_incidents_table(conn)
     create_datasets_metadata_table(conn)
     create_it_tickets_table(conn)
+    create_sessions_table(conn)
+    create_lockout_table(conn)
+    print("✅ All tables created successfully!")
