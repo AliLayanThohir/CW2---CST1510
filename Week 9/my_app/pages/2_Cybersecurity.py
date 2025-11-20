@@ -38,7 +38,7 @@ with tab_analytics:
         if not df_type.empty:
              st.bar_chart(df_type.set_index("incident_type")) 
     with col2:
-        #Shows data table of incidents by their 
+        #Shows data table of incidents by their severity, only shows High and Critical status incidents
         st.markdown("**High Severity by Status**") 
         df_high = get_high_severity_by_status() 
         st.dataframe(df_high, use_container_width=True) 
