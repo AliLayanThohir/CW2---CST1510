@@ -1,6 +1,6 @@
 #CST1510 - Programming for Data Communication and Networks
 #Coursework 2 - Multi-Domain Intelligence Platform
-#Ali Layan Thohir - M01091333 - Week 9 - Streamlit Interfact
+#Ali Layan Thohir - M01091333 - Week 9 - Streamlit Interface
 
 #Importing libraries / needed items to run homepage
 import streamlit as st
