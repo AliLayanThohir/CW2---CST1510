@@ -1,0 +1,4 @@
+#As a sidebar is automatically made by streamlit, goes to client configuration first
+[client]
+#Toggles it so the automatic sidebar made is disabled allowing for use of custom sidebar made in the files
+showSidebarNavigation = false
