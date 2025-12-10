@@ -1,6 +1,7 @@
 #Import needed to make this module work
 import bcrypt
 import string
+import secrets
 from datetime import datetime, timedelta
 from services.database_manager import DatabaseManager
 from models.users import User
@@ -81,7 +82,11 @@ class AuthManager:
         if user.verify_password(password):
             #If password is correct, resets whatever lockout
             self.reset_lockout(username)
-            return user, f'Successfully logged in {username}'
+            
+            #Create and log session token
+            token = self._create_session(username)
+            
+            return user, f'Successfully logged in {username}. Session Token: {token}'
         else:
             #Records attempt, if it hits 3, automatically locks out user
             self.record_failed_attempt(username)
@@ -89,6 +94,16 @@ class AuthManager:
             if attempts >= 3:
                 return None, f"User - {username} is now locked out due to three failed attempts.\nPlease try again after 5 minutes."
             return None, "Incorrect password, please try again."
+    
+    #Function to create and log a session token
+    def _create_session(self, username):
+        token = secrets.token_hex(16)
+        created_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self._db.execute_query(
+            "INSERT INTO sessions (username, token, created_at) VALUES (?, ?, ?)", 
+            (username, token, created_at)
+        )
+        return token
 
     #Function to register user
     def register_user(self, username, password, group_choice):

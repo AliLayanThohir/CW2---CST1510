@@ -1,5 +1,6 @@
 #Importing libraries / needed items to run homepage
 import streamlit as st
+from time import sleep
 from services.database_manager import DatabaseManager
 from services.auth_manager import AuthManager
 from utils.navigation import make_sidebar
@@ -29,7 +30,7 @@ if "username" not in st.session_state:
 if "role" not in st.session_state:
     st.session_state.role = ""
 
-#Render Sidebar (Custom implementation based on your Utils)
+#Render Sidebar
 with st.sidebar:
     st.title("🧩 Navigation")
     st.page_link("Home.py", label="Home", icon="🏠")
@@ -75,6 +76,7 @@ st.title("🔐 Multi-Domain Intelligence Platform")
 #If user is logged in
 if st.session_state.logged_in:
     st.success(f"You are currently logged in as **{st.session_state.username}** ({st.session_state.role}).")
+    st.code(f"Session Token: {st.session_state.token}", language="text")
     st.info("Use the sidebar 🧭 to navigate to your modules.")
 
 #If user is not logged in
@@ -103,6 +105,7 @@ else:
                     st.session_state.username = user.get_username()
                     st.session_state.role = user.get_role()
                     st.success(msg)
+                    sleep(2)
                     st.switch_page("pages/1_🔐 _Login.py")
                 #If unsuccessful displays error message
                 else:
