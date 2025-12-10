@@ -7,9 +7,6 @@ from utils.navigation import make_sidebar
 #Page configuration, icon, title and it's layout
 st.set_page_config(page_title="Intelligence Platform", page_icon="🔐", layout="centered")
 
-#Render the custom sidebar
-make_sidebar()
-
 #Initialize Services
 db = DatabaseManager()
 auth = AuthManager(db)

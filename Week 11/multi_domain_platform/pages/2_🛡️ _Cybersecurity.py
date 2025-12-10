@@ -7,7 +7,7 @@ from models.security_incident import SecurityIncident
 from utils.navigation import make_sidebar
 
 #Page configuration, icon, title and it's layout
-st.set_page_config(page_title="Cybersecurity", page_icon="🔒", layout="wide")
+st.set_page_config(page_title="Cybersecurity", page_icon="🛡️", layout="wide")
 
 #Render the custom sidebar
 make_sidebar()

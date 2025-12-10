@@ -18,29 +18,29 @@ def make_sidebar():
             st.subheader("Modules")
             
             #Dashboard link 
-            st.page_link("pages/1_Dashboard.py", label="Dashboard", icon="📊")
+            st.page_link("pages/1_🔐 _Login.py", label="Dashboard", icon="📊")
             
             #Get current user role
             role = st.session_state.get("role", "")
             
             #Shows the Cybersecurity page - Only to Cybersecurity Analysts
             if role == "Cybersecurity Analyst":
-                st.page_link("pages/2_Cybersecurity.py", label="Cybersecurity", icon="🔒")
+                st.page_link("pages/2_🛡️ _Cybersecurity.py", label="Cybersecurity", icon="🛡️")
             
             #Shows the Data Science page - Only to Data Scientists
             if role == "Data Scientist":
-                st.page_link("pages/3_Data_Science.py", label="Data Science", icon="📈")
+                st.page_link("pages/3_📊 _Data_Science.py", label="Data Science", icon="📊")
                 
             #Shows the IT Operations page - Only to IT Administrators
             if role == "IT Administrator":
-                st.page_link("pages/4_IT_Operations.py", label="IT Operations", icon="⚙️")
+                st.page_link("pages/4_💻 _IT_Operations.py", label="IT Operations", icon="💻")
             
             #Always show the AI Assistant
-            st.page_link("pages/5_AI_Assistant.py", label="AI Assistant", icon="🤖")
+            st.page_link("pages/5_🤖 _AI_Assistant.py", label="AI Assistant", icon="🤖")
             
             #Logout Section
             st.divider()
-            if st.button("Log Out", use_container_width=True):
+            if st.button("Log Out", key="logout_button", use_container_width=True):
                 #Clear session state variables
                 st.session_state.logged_in = False
                 st.session_state.username = ""
