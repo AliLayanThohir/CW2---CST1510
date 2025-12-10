@@ -86,14 +86,14 @@ class AuthManager:
             #Create and log session token
             token = self._create_session(username)
             
-            return user, f'Successfully logged in {username}. Session Token: {token}'
+            return user, token, f'Successfully logged in {username}. Session Token: {token}'
         else:
             #Records attempt, if it hits 3, automatically locks out user
             self.record_failed_attempt(username)
             attempts, last_time = self.get_lockout_status(username)
             if attempts >= 3:
-                return None, f"User - {username} is now locked out due to three failed attempts.\nPlease try again after 5 minutes."
-            return None, "Incorrect password, please try again."
+                return None, None, f"User - {username} is now locked out due to three failed attempts.\nPlease try again after 5 minutes."
+            return None, None, "Incorrect password, please try again."
     
     #Function to create and log a session token
     def _create_session(self, username):

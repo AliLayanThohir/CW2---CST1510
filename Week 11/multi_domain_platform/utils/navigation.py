@@ -45,6 +45,7 @@ def make_sidebar():
                 st.session_state.logged_in = False
                 st.session_state.username = ""
                 st.session_state.role = ""
+                st.session_state.token = ""
                 
                 #Clear any service instances (like AI assistant)
                 if 'ai_service' in st.session_state:

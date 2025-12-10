@@ -99,13 +99,14 @@ else:
             #Check if inputs are provided
             if login_user_input and login_pass_input:
                 #Login user function using predefined function
-                user, msg = auth.login_user(login_user_input, login_pass_input)
+                user, token, msg = auth.login_user(login_user_input, login_pass_input)
                 
                 #If login successful, updates session state and redirects
                 if user:
                     st.session_state.logged_in = True
                     st.session_state.username = user.get_username()
                     st.session_state.role = user.get_role()
+                    st.session_state.token = token
                     st.success(msg)
                     sleep(2)
                     st.switch_page("pages/1_🔐 _Login.py")
