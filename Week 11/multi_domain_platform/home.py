@@ -29,6 +29,8 @@ if "username" not in st.session_state:
     st.session_state.username = ""
 if "role" not in st.session_state:
     st.session_state.role = ""
+if "token" not in st.session_state:
+    st.session_state.token = ""
 
 #Render Sidebar
 with st.sidebar:
